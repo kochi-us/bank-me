@@ -1,0 +1,339 @@
+{
+  "creditCards" : [
+    {
+      "id" : "1BF7B640-AA78-4AB5-9BE3-80EBD9562013",
+      "name" : "rakuten card mika"
+    },
+    {
+      "id" : "B076BB55-0FF5-4E95-8B62-58137B4DE509",
+      "name" : "amazon card mika"
+    },
+    {
+      "id" : "2630D048-19CE-4C64-9FFC-94126C31A1AB",
+      "name" : "paypay card mika"
+    },
+    {
+      "id" : "4DB456D3-C01C-429B-8E31-C2AB36F234F9",
+      "name" : "paidy card mika"
+    },
+    {
+      "id" : "1D984975-3BD4-4948-BC0A-F08520866108",
+      "name" : "smbc card kochi"
+    },
+    {
+      "id" : "614B41C0-B13A-48A0-B4DB-A60A14B2540E",
+      "name" : "olive assist"
+    }
+  ],
+  "categories" : [
+    {
+      "name" : "生活費",
+      "id" : "36EB998D-D1C7-453A-94CD-B36054D3176F"
+    },
+    {
+      "name" : "給与",
+      "id" : "9DA623DD-CDCD-4026-BC9B-BE0973E7BB42"
+    },
+    {
+      "name" : "iphone16",
+      "id" : "00578830-0D8D-4A56-B518-CE671BABB8C2"
+    },
+    {
+      "name" : "日用品他",
+      "id" : "14E2F6F1-DF1C-43CD-AE9F-B8A0EDDB7666"
+    },
+    {
+      "name" : "府民共済",
+      "id" : "10F1BCB5-0EAA-4BE7-BC07-A499A53788F2"
+    },
+    {
+      "name" : "年金",
+      "id" : "6DC03DBB-D515-4C94-9759-A6DD8FDB7B72"
+    },
+    {
+      "name" : "管理費",
+      "id" : "AF0C76F5-EC77-4E1B-9060-4C8BCE0E91B5"
+    },
+    {
+      "name" : "借入",
+      "id" : "FCDFCEAD-E452-4C21-8F58-FEBDD789D165"
+    },
+    {
+      "name" : "atm",
+      "id" : "B97852D1-3B2B-4D67-A2EC-E58F9D4D3DEA"
+    },
+    {
+      "name" : "loto",
+      "id" : "FF0A58E1-F11A-4C14-BDF4-9C16C0EE8F88"
+    }
+  ],
+  "version" : 1,
+  "transactions" : [
+    {
+      "amount" : 10000,
+      "memo" : "",
+      "fromAccountID" : "E1DF750D-6336-4009-B74C-DAE43CED5C71",
+      "toAccountID" : "7CFAC50E-564C-42D3-B15C-2FBDA3291D04",
+      "pairID" : "153AD3D3-E678-468D-B67E-D4220ACBA074",
+      "id" : "686ACB94-A316-4A74-8EF9-5FF48D7BF587",
+      "kind" : "資金移動",
+      "date" : "2025-10-14T23:22:43Z"
+    },
+    {
+      "amount" : 10000,
+      "memo" : "",
+      "fromAccountID" : "E1DF750D-6336-4009-B74C-DAE43CED5C71",
+      "toAccountID" : "7CFAC50E-564C-42D3-B15C-2FBDA3291D04",
+      "pairID" : "153AD3D3-E678-468D-B67E-D4220ACBA074",
+      "id" : "B057DEF6-CC8A-4053-A145-A115B5118C5E",
+      "kind" : "資金移動",
+      "date" : "2025-10-14T23:22:43Z"
+    },
+    {
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "amount" : 8744,
+      "id" : "20D8EA5B-FAA2-4B04-98BA-BC77BEDD0A2E",
+      "memo" : "",
+      "kind" : "口座残高",
+      "date" : "2025-09-30T23:21:57Z"
+    },
+    {
+      "memo" : "",
+      "categoryID" : "FF0A58E1-F11A-4C14-BDF4-9C16C0EE8F88",
+      "date" : "2025-10-30T23:20:22Z",
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "amount" : 1800,
+      "kind" : "支出",
+      "id" : "5D87AE5D-5650-46B3-AF21-F27AEB340816"
+    },
+    {
+      "amount" : 22652,
+      "memo" : "",
+      "fromAccountID" : "E1DF750D-6336-4009-B74C-DAE43CED5C71",
+      "date" : "2025-10-14T23:07:26Z",
+      "pairID" : "A53CA396-A3BF-48C4-AE79-B47CBD80D0E9",
+      "id" : "9C601BEE-B5F5-4FBC-9EFC-2C13097C2D96",
+      "kind" : "資金移動",
+      "toAccountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD"
+    },
+    {
+      "amount" : 22652,
+      "memo" : "",
+      "fromAccountID" : "E1DF750D-6336-4009-B74C-DAE43CED5C71",
+      "date" : "2025-10-14T23:07:26Z",
+      "pairID" : "A53CA396-A3BF-48C4-AE79-B47CBD80D0E9",
+      "id" : "84163D16-9865-46C5-8CF5-AC7C476125EE",
+      "kind" : "資金移動",
+      "toAccountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD"
+    },
+    {
+      "amount" : 30000,
+      "memo" : "",
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "date" : "2025-10-12T23:17:47Z",
+      "id" : "AAEECF57-981C-4E76-BB80-311A2B1C023E",
+      "kind" : "支出",
+      "categoryID" : "B97852D1-3B2B-4D67-A2EC-E58F9D4D3DEA"
+    },
+    {
+      "amount" : 20000,
+      "memo" : "",
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "date" : "2025-10-30T23:16:22Z",
+      "id" : "1C994A03-81DF-48BB-A894-D584F0EDA4B0",
+      "cardID" : "614B41C0-B13A-48A0-B4DB-A60A14B2540E",
+      "kind" : "クレジット決済"
+    },
+    {
+      "amount" : 30000,
+      "memo" : "",
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "date" : "2025-10-12T23:15:40Z",
+      "id" : "A7A756D6-EF8D-4789-A5B9-533052F04050",
+      "kind" : "収入",
+      "cardID" : "614B41C0-B13A-48A0-B4DB-A60A14B2540E",
+      "categoryID" : "FCDFCEAD-E452-4C21-8F58-FEBDD789D165"
+    },
+    {
+      "amount" : 16660,
+      "memo" : "",
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "date" : "2025-10-24T23:11:32Z",
+      "id" : "0AF6C305-8D37-4055-B662-07A4A6206C83",
+      "kind" : "支出",
+      "categoryID" : "AF0C76F5-EC77-4E1B-9060-4C8BCE0E91B5"
+    },
+    {
+      "amount" : 41545,
+      "memo" : "",
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "date" : "2025-10-26T23:09:32Z",
+      "id" : "95572815-7F9A-4008-B18A-07CDD7A6F75D",
+      "cardID" : "1D984975-3BD4-4948-BC0A-F08520866108",
+      "kind" : "クレジット決済"
+    },
+    {
+      "amount" : 36652,
+      "memo" : "",
+      "accountID" : "E1DF750D-6336-4009-B74C-DAE43CED5C71",
+      "date" : "2025-10-14T23:06:25Z",
+      "id" : "5D6BE228-B6E0-46AA-9FE5-E0E848820A37",
+      "kind" : "収入",
+      "categoryID" : "6DC03DBB-D515-4C94-9759-A6DD8FDB7B72"
+    },
+    {
+      "accountID" : "E1DF750D-6336-4009-B74C-DAE43CED5C71",
+      "amount" : 1000,
+      "id" : "C35252EF-5AEA-46C3-A7DF-89A0060369A6",
+      "memo" : "",
+      "kind" : "口座残高",
+      "date" : "2025-09-30T23:05:38Z"
+    },
+    {
+      "amount" : 2000,
+      "memo" : "",
+      "accountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "date" : "2025-10-14T23:05:08Z",
+      "id" : "BEE5EF35-1285-47BD-A7A3-E8BF2FB087CA",
+      "kind" : "支出",
+      "categoryID" : "10F1BCB5-0EAA-4BE7-BC07-A499A53788F2"
+    },
+    {
+      "amount" : 56330,
+      "memo" : "",
+      "fromAccountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "date" : "2025-10-23T23:04:26Z",
+      "pairID" : "A0CDBD00-31B2-42D5-A347-09B319B0950A",
+      "id" : "EB99EF8C-75F1-4979-9C81-3BB6FEB84A75",
+      "kind" : "資金移動",
+      "toAccountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD"
+    },
+    {
+      "amount" : 56330,
+      "memo" : "",
+      "fromAccountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "date" : "2025-10-23T23:04:26Z",
+      "pairID" : "A0CDBD00-31B2-42D5-A347-09B319B0950A",
+      "id" : "36685A89-A112-4E39-AB46-379B1E1729EE",
+      "kind" : "資金移動",
+      "toAccountID" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD"
+    },
+    {
+      "amount" : 4000,
+      "memo" : "",
+      "accountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "date" : "2025-10-14T23:03:45Z",
+      "id" : "8BF4C4EA-9E6D-445C-BD31-CCA5609761C6",
+      "kind" : "支出",
+      "categoryID" : "10F1BCB5-0EAA-4BE7-BC07-A499A53788F2"
+    },
+    {
+      "accountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "amount" : 5000,
+      "id" : "8BDCAD08-CF0C-466D-B2CC-01001EBD07CF",
+      "memo" : "",
+      "kind" : "口座残高",
+      "date" : "2025-09-30T23:02:37Z"
+    },
+    {
+      "amount" : 22399,
+      "memo" : "",
+      "accountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "date" : "2025-10-26T23:02:02Z",
+      "id" : "C05A0277-9549-411D-A58A-B97C3CE135F1",
+      "kind" : "クレジット決済",
+      "cardID" : "B076BB55-0FF5-4E95-8B62-58137B4DE509",
+      "categoryID" : "14E2F6F1-DF1C-43CD-AE9F-B8A0EDDB7666"
+    },
+    {
+      "accountID" : "7CFAC50E-564C-42D3-B15C-2FBDA3291D04",
+      "amount" : 110000,
+      "id" : "69898CD3-BC20-4CE6-A1D4-F8EB8B8CE9D5",
+      "memo" : "",
+      "kind" : "口座残高",
+      "date" : "2025-09-30T22:59:35Z"
+    },
+    {
+      "amount" : 60000,
+      "memo" : "",
+      "fromAccountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "date" : "2025-10-23T22:58:57Z",
+      "pairID" : "0171424B-013D-4F3D-9C79-8A0F15A1472D",
+      "id" : "12E37FF5-41E3-4001-AA58-5BC1E953FAB1",
+      "kind" : "資金移動",
+      "toAccountID" : "7CFAC50E-564C-42D3-B15C-2FBDA3291D04"
+    },
+    {
+      "memo" : "",
+      "kind" : "資金移動",
+      "fromAccountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "amount" : 60000,
+      "id" : "4785CF32-C39B-45DB-A5F0-3BD78EF9B787",
+      "toAccountID" : "7CFAC50E-564C-42D3-B15C-2FBDA3291D04",
+      "date" : "2025-10-23T22:58:57Z",
+      "pairID" : "0171424B-013D-4F3D-9C79-8A0F15A1472D"
+    },
+    {
+      "cardID" : "4DB456D3-C01C-429B-8E31-C2AB36F234F9",
+      "memo" : "",
+      "kind" : "クレジット決済",
+      "accountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "amount" : 4110,
+      "id" : "B176323E-F7E2-4A17-8196-F1F1530B4B4F",
+      "categoryID" : "00578830-0D8D-4A56-B518-CE671BABB8C2",
+      "date" : "2025-10-30T22:58:26Z"
+    },
+    {
+      "memo" : "",
+      "kind" : "収入",
+      "accountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "amount" : 367496,
+      "id" : "B0117C54-C690-4691-8FF7-F731A4FD3868",
+      "categoryID" : "9DA623DD-CDCD-4026-BC9B-BE0973E7BB42",
+      "date" : "2025-10-23T22:55:26Z"
+    },
+    {
+      "cardID" : "1BF7B640-AA78-4AB5-9BE3-80EBD9562013",
+      "memo" : "",
+      "kind" : "クレジット決済",
+      "accountID" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "amount" : 215657,
+      "id" : "F1C60CCC-FCF3-41F6-A5F4-67CA3C884305",
+      "categoryID" : "36EB998D-D1C7-453A-94CD-B36054D3176F",
+      "date" : "2025-10-26T22:53:45Z"
+    }
+  ],
+  "accounts" : [
+    {
+      "name" : "ufj mika",
+      "branchName" : "",
+      "id" : "66FD9639-0E61-4109-B635-8B2F3639D97D",
+      "number" : "",
+      "branchCode" : ""
+    },
+    {
+      "branchCode" : "",
+      "branchName" : "",
+      "id" : "E1DF750D-6336-4009-B74C-DAE43CED5C71",
+      "number" : "",
+      "name" : "ufj kochi"
+    },
+    {
+      "branchCode" : "",
+      "branchName" : "",
+      "id" : "7CFAC50E-564C-42D3-B15C-2FBDA3291D04",
+      "number" : "",
+      "name" : "smbc mika"
+    },
+    {
+      "branchCode" : "",
+      "branchName" : "",
+      "id" : "B3D8C841-DF3B-49D2-9705-8B5CA1240ADD",
+      "number" : "",
+      "name" : "smbc kochi"
+    }
+  ],
+  "personName" : "kochi",
+  "appTitle" : "口座管理",
+  "avatarFilename" : "avatar.png"
+}
