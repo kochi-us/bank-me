@@ -61,6 +61,17 @@ struct MainContentView: View {
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 320)
             }
+#if os(macOS)
+            // 💾 バックアップ（アプリデータをフォルダにコピー）
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    store.backupToFolder()
+                } label: {
+                    Label("バックアップ", systemImage: "externaldrive.fill.badge.plus")
+                }
+                .help("アプリデータを選択フォルダにバックアップ")
+            }
+#endif
             // ➕ 追加
             ToolbarItem(placement: .primaryAction) {
                 Button {

@@ -234,11 +234,54 @@ final class AppStore: ObservableObject {
         if !isRunningInPreviews {
             load()
             setupAutosave()
-            revealStateFile()        }
+                  }
     }
 
     // MARK: - Utils (macOS)
 #if os(macOS)
+    /// アプリのデータフォルダ（Application Support 配下）を選択したフォルダへフルコピーしてバックアップします。
+    /// 失敗時はアラートを表示し、成功時は Finder でバックアップ先を開きます。
+    func backupToFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.canCreateDirectories = true
+        panel.prompt = "選択"
+        panel.message = "バックアップの保存先フォルダを選択"
+
+        guard panel.runModal() == .OK, let dest = panel.url else { return }
+
+        let fm = FileManager.default
+        // stateURL が指すファイルの親ディレクトリをバックアップ対象にする
+        let sourceDir = stateURL.deletingLastPathComponent()
+
+        let df = DateFormatter()
+        df.locale = Locale(identifier: "ja_JP_POSIX")
+        df.dateFormat = "yyyyMMdd-HHmmss"
+        let stamp = df.string(from: Date())
+
+        // 選択フォルダ直下にタイムスタンプ付きフォルダを作る
+        let backupDir = dest.appendingPathComponent("bank-management-backup-\(stamp)", isDirectory: true)
+
+        do {
+            try fm.createDirectory(at: backupDir, withIntermediateDirectories: true)
+            let destSub = backupDir.appendingPathComponent(sourceDir.lastPathComponent, isDirectory: true)
+            if fm.fileExists(atPath: destSub.path) {
+                try fm.removeItem(at: destSub)
+            }
+            try fm.copyItem(at: sourceDir, to: destSub)
+            // 成功したら Finder で表示
+            NSWorkspace.shared.activateFileViewerSelecting([backupDir])
+        } catch {
+            // 失敗したらアラート
+            let alert = NSAlert(error: error)
+            alert.messageText = "バックアップに失敗しました"
+            alert.informativeText = error.localizedDescription
+            alert.runModal()
+        }
+    }
+
     func revealStateFile() {
         NSWorkspace.shared.activateFileViewerSelecting([stateURL])
     }
