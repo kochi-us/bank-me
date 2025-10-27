@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C0C853CD2EA3C399005DF3CF /* README 2.md in Resources */ = {isa = PBXBuildFile; fileRef = C0C853CC2EA3C399005DF3CF /* README 2.md */; };
+		C0C853CD2EA3C399005DF3CF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C0C853CC2EA3C399005DF3CF /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		C0A2C4EA2EA5DF30007CA35B /* bank-management.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "bank-management.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0C853CC2EA3C399005DF3CF /* README 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "README 2.md"; sourceTree = "<group>"; };
+		C0C853CC2EA3C399005DF3CF /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -38,7 +38,7 @@
 			isa = PBXGroup;
 			children = (
 				C0EFC8102E9CF072004C8938 /* bank-management */,
-				C0C853CC2EA3C399005DF3CF /* README 2.md */,
+				C0C853CC2EA3C399005DF3CF /* README.md */,
 				C0A2C4EA2EA5DF30007CA35B /* bank-management.app */,
 			);
 			sourceTree = "<group>";
@@ -107,7 +107,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0C853CD2EA3C399005DF3CF /* README 2.md in Resources */,
+				C0C853CD2EA3C399005DF3CF /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +264,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.01;
+				MARKETING_VERSION = 1.02;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.kochi.bank-management";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -297,7 +297,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.01;
+				MARKETING_VERSION = 1.02;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.kochi.bank-management";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
