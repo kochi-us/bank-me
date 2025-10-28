@@ -9,6 +9,7 @@ import Foundation
 import Combine
 #if os(macOS)
 import AppKit
+import UniformTypeIdentifiers
 #endif
 
 @MainActor
@@ -234,11 +235,67 @@ final class AppStore: ObservableObject {
         if !isRunningInPreviews {
             load()
             setupAutosave()
-                  }
+#if os(macOS)
+            autoBackupOnLaunch(maxCopies: 7)
+#endif
+        }
     }
 
     // MARK: - Utils (macOS)
 #if os(macOS)
+    /// アプリ起動時に自動バックアップを作成し、古いものはローテーションで削除します。
+    /// - Parameter maxCopies: 残すバックアップの最大個数（古い順に削除）
+    private func autoBackupOnLaunch(maxCopies: Int = 7) {
+        let fm = FileManager.default
+        let sourceDir = stateURL.deletingLastPathComponent()
+        let backupsRoot = sourceDir.appendingPathComponent("Backups", isDirectory: true)
+        do {
+            if !fm.fileExists(atPath: backupsRoot.path) {
+                try fm.createDirectory(at: backupsRoot, withIntermediateDirectories: true)
+            }
+            // タイムスタンプフォルダ作成
+            let df = DateFormatter()
+            df.locale = Locale(identifier: "ja_JP_POSIX")
+            df.dateFormat = "yyyyMMdd-HHmmss"
+            let stamp = df.string(from: Date())
+            let thisBackup = backupsRoot.appendingPathComponent(stamp, isDirectory: true)
+            try fm.createDirectory(at: thisBackup, withIntermediateDirectories: true)
+
+            // 対象ファイルだけコピー（state.json / avatar.png が存在すれば）
+            let candidates = ["state.json", "avatar.png", "state.preview.json", "avatar.preview.png"]
+            for name in candidates {
+                let src = sourceDir.appendingPathComponent(name)
+                if fm.fileExists(atPath: src.path) {
+                    let dst = thisBackup.appendingPathComponent(name)
+                    // 既存があれば消してからコピー
+                    if fm.fileExists(atPath: dst.path) { try? fm.removeItem(at: dst) }
+                    try? fm.copyItem(at: src, to: dst)
+                }
+            }
+
+            // ローテーション（古い順に削除）
+            let entries = (try? fm.contentsOfDirectory(at: backupsRoot, includingPropertiesForKeys: [.creationDateKey], options: [.skipsHiddenFiles])) ?? []
+            let dirs = entries.filter { url in
+                var isDir: ObjCBool = false
+                fm.fileExists(atPath: url.path, isDirectory: &isDir)
+                return isDir.boolValue
+            }
+            let sorted = dirs.sorted { (a, b) -> Bool in
+                let aDate = (try? a.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? Date.distantPast
+                let bDate = (try? b.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? Date.distantPast
+                return aDate < bDate
+            }
+            if sorted.count > maxCopies {
+                for url in sorted.prefix(sorted.count - maxCopies) {
+                    try? fm.removeItem(at: url)
+                }
+            }
+            print("[AutoBackup] created:", thisBackup.lastPathComponent)
+        } catch {
+            print("[AutoBackup] error:", error)
+        }
+    }
+
     /// アプリのデータフォルダ（Application Support 配下）を選択したフォルダへフルコピーしてバックアップします。
     /// 失敗時はアラートを表示し、成功時は Finder でバックアップ先を開きます。
     func backupToFolder() {
@@ -286,4 +343,69 @@ final class AppStore: ObservableObject {
         NSWorkspace.shared.activateFileViewerSelecting([stateURL])
     }
 #endif
+    }
+// MARK: - Restore (手動復元)
+#if os(macOS)
+extension AppStore {
+    /// バックアップJSONファイルを選択して復元します
+    func restoreFromFolder() {
+        let panel = NSOpenPanel()
+        if #available(macOS 12.0, *) {
+            panel.allowedContentTypes = [UTType.json]
+        } else {
+            panel.allowedFileTypes = ["json"]
+        }
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        panel.title = "復元するJSONファイルを選択"
+
+        if panel.runModal() == .OK, let url = panel.url {
+            do {
+                let data = try Data(contentsOf: url)
+                let dec = JSONDecoder()
+                dec.dateDecodingStrategy = .iso8601
+                let state = try dec.decode(AppState.self, from: data)
+
+                // JSONデータをAppStoreのプロパティに反映
+                self.categories = state.categories.map { Category(id: $0.id, name: $0.name) }
+                self.accounts = state.accounts.map {
+                    Account(id: $0.id, name: $0.name, number: $0.number, branchName: $0.branchName, branchCode: $0.branchCode)
+                }
+                self.creditCards = state.creditCards.map { Category(id: $0.id, name: $0.name) }
+                self.transactions = state.transactions.map { t in
+                    Transaction(
+                        id: t.id,
+                        date: t.date,
+                        amount: t.amount,
+                        memo: t.memo,
+                        kind: t.kind,
+                        category: self.categories.first { $0.id == t.categoryID },
+                        card: self.creditCards.first { $0.id == t.cardID },
+                        person: nil,
+                        account: self.accounts.first { $0.id == t.accountID },
+                        fromAccount: self.accounts.first { $0.id == t.fromAccountID },
+                        toAccount: self.accounts.first { $0.id == t.toAccountID },
+                        pairID: t.pairID
+                    )
+                }
+                self.personName = state.personName
+                self.appTitle = state.appTitle
+
+                self.save()
+                print("✅ 復元完了:", url.lastPathComponent)
+
+                // Finderで復元ファイルを表示
+                NSWorkspace.shared.activateFileViewerSelecting([url])
+            } catch {
+                let alert = NSAlert()
+                alert.messageText = "復元に失敗しました"
+                alert.informativeText = error.localizedDescription
+                alert.alertStyle = .warning
+                alert.runModal()
+                print("⚠️ 復元失敗:", error)
+            }
+        }
+    }
 }
+#endif

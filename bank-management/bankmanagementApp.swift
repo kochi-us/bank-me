@@ -36,5 +36,21 @@ struct BankManagementApp: App {
             Account.self,
             Person.self
         ])
+#if os(macOS)
+        .commands {
+            CommandGroup(after: .importExport) {
+                Button("restore") {
+                    store.restoreFromFolder()
+                }
+                .keyboardShortcut("R", modifiers: [.command, .shift])
+
+                .keyboardShortcut("B", modifiers: [.command, .shift])
+
+                Button("open details") {
+                    store.revealStateFile()
+                }
+            }
+        }
+#endif
     }
 }
