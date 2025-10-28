@@ -20,15 +20,3 @@ cp "~/Library/Containers/com.kochi.bank-management/Data/Library/Application Supp
 git add Resources/InitialState/state.json
 git commit -m "Update backup: state.json"
 git push
-
-
----
-
-📍次にやること：
-1. Xcode のプロジェクトナビゲータで `README.md` を開く  
-2. 上記の内容を一番下に貼り付ける  
-3. 保存して  
-   ```bash
-   git add README.md
-   git commit -m "Add backup instructions to README"
-   git push
