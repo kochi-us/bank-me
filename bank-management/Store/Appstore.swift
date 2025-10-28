@@ -349,6 +349,40 @@ final class AppStore: ObservableObject {
     }
 #endif
     }
+
+// MARK: - Utils (shared)
+extension AppStore {
+    /// ID から口座を取得（nil 安全）
+    func account(id: UUID?) -> Account? {
+        guard let id else { return nil }
+        return accounts.first(where: { $0.id == id })
+    }
+
+    /// 取引の新規/更新を 1 本化（存在すれば置換／なければ追加）
+    func upsertTransaction(_ newValue: Transaction) {
+        if let idx = transactions.firstIndex(where: { $0.id == newValue.id }) {
+            transactions[idx] = newValue
+        } else {
+            transactions.append(newValue)
+        }
+    }
+
+    /// カードに紐づくデフォルト決済口座ID（あれば返す）
+    func defaultSettlementAccountID(for cardID: UUID?) -> UUID? {
+        guard let cardID else { return nil }
+        return cardPaymentAccount[cardID]
+    }
+
+    /// カードのデフォルト決済口座IDを更新／削除
+    func setDefaultSettlementAccountID(_ accountID: UUID?, for cardID: UUID?) {
+        guard let cardID else { return }
+        if let accountID {
+            cardPaymentAccount[cardID] = accountID
+        } else {
+            cardPaymentAccount.removeValue(forKey: cardID)
+        }
+    }
+}
 // MARK: - Restore (手動復元)
 #if os(macOS)
 extension AppStore {

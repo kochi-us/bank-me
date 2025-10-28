@@ -48,7 +48,7 @@ struct SidebarView: View {
             
             // クイック
             Section("Today or All Time") {
-                Label("すべて", systemImage: "tray.full")
+                Label("all", systemImage: "tray.full")
                     .tag(SidebarItem.all)
             }
             

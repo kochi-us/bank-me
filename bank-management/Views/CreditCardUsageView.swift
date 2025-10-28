@@ -29,7 +29,6 @@ struct CreditCardUsageView: View {
     // 支払い登録シート用
     @State private var showSettlementSheet = false
     @State private var settleAmountText = ""
-    @State private var settleAccount: Account? = nil
     @State private var settleAccountID: UUID? = nil
     @State private var settleDate: Date = Date()
     
@@ -37,7 +36,7 @@ struct CreditCardUsageView: View {
         case today = "今日"
         case thisMonth = "今月"
         case byMonth = "月指定"
-        case all = "すべて"
+        case all = "all"
         var id: String { rawValue }
     }
     
@@ -142,18 +141,15 @@ struct CreditCardUsageView: View {
                         .frame(width: 160)
                         .onSubmit { commitSettlement() }
                 }
-                Picker("決済口座", selection: Binding(
-                    get: { settleAccountID ?? store.accounts.first?.id ?? UUID() },
-                    set: { id in
-                        settleAccountID = id
-                        settleAccount = store.accounts.first(where: { $0.id == id })
-                    }
-                )) {
-                    ForEach(store.accounts) { a in
-                        Text(a.name).tag(a.id)
+                Picker("決済口座", selection: $settleAccountID) {
+                    Text("— 口座を選択 —").tag(UUID?.none)
+                    ForEach(store.accounts, id: \.id) { a in
+                        Text(a.name).tag(Optional(a.id))
                     }
                 }
+                .pickerStyle(.menu)
                 .frame(maxWidth: 300)
+                .disabled(store.accounts.isEmpty)
                 DatePicker("決済日", selection: $settleDate, displayedComponents: .date)
                     .datePickerStyle(.field)
                     .onSubmit { commitSettlement() }
@@ -170,81 +166,75 @@ struct CreditCardUsageView: View {
             .padding(16)
             .frame(minWidth: 420)
             .onAppear {
-                if settleAccount == nil { settleAccount = store.accounts.first }
-                if settleAccountID == nil { settleAccountID = settleAccount?.id ?? store.accounts.first?.id }
+                // 既定口座（カードに結び付いているもの）が有効ならそれ、なければ先頭口座
+                if let preset = store.defaultSettlementAccountID(for: selectedCardID),
+                   store.accounts.contains(where: { $0.id == preset }) {
+                    settleAccountID = preset
+                } else {
+                    settleAccountID = store.accounts.first?.id
+                }
             }
         }
+        // —— Defensive: マスター配列の差し替えで選択が孤立しないように保護 ——
+        .onReceive(store.$accounts) { _ in
+            if let id = settleAccountID, !store.accounts.contains(where: { $0.id == id }) {
+                // 消えた口座IDを検知したら、先頭 or nil にフォールバック
+                settleAccountID = store.accounts.first?.id
+            }
+        }
+        .onReceive(store.$creditCards) { _ in
+            if let cid = selectedCardID, !store.creditCards.contains(where: { $0.id == cid }) {
+                // 消えたカードIDを検知したら、"すべて"（nil）へフォールバック
+                selectedCardID = nil
+            }
+        }
+.onChange(of: showSettlementSheet) { oldValue, newValue in
+    if newValue, settleAccountID == nil {
+        if let preset = store.defaultSettlementAccountID(for: selectedCardID),
+           store.accounts.contains(where: { $0.id == preset }) {
+            settleAccountID = preset
+        } else {
+            settleAccountID = store.accounts.first?.id
+        }
+    }
+}
     }
     
     // MARK: - UI
     
     private var headerBar: some View {
         HStack(spacing: 12) {
-            Picker("カード", selection: $selectedCardID) {
-                Text("すべて").tag(UUID?.none)
+            // 左：カード選択（固定幅）
+            Picker("", selection: $selectedCardID) {
+                Text("all").tag(UUID?.none)
                 ForEach(store.creditCards, id: \.id) { card in
                     Text(card.name).tag(UUID?.some(card.id))
                 }
             }
             .pickerStyle(.menu)
-            .frame(width: 200)
-            
-            Spacer().frame(width: 20)
-            
-            Picker("期間", selection: $scope) {
-                Text(Scope.today.rawValue).tag(Scope.today)
-                Text(Scope.thisMonth.rawValue).tag(Scope.thisMonth)
-                Text(Scope.byMonth.rawValue).tag(Scope.byMonth)
-                Text(Scope.all.rawValue).tag(Scope.all)
-            }
-            .pickerStyle(.segmented)
-            .frame(maxWidth: 360)
-            Spacer().frame(width: 12)
-            
-            if scope == .byMonth {
-                monthSelector
-                    .transition(.opacity)
-            }
-            
-            // 期間の右横に配置する「支払い登録…」ボタン
-            Button {
-                // ① 合計をプリセット（現在のフィルタの合計）
-                let amt = max(0, totalAmount)
-                if let s = Fmt.decimal.string(from: NSNumber(value: amt)) {
-                    settleAmountText = s
-                } else {
-                    settleAmountText = String(Int(amt))
+            .frame(width: 55)
+
+            // 中：期間 + 年月選択（可変幅・左寄せ）
+            HStack(spacing: 16) {
+                Picker("", selection: $scope) {
+                    Text(Scope.today.rawValue).tag(Scope.today)
+                    Text(Scope.thisMonth.rawValue).tag(Scope.thisMonth)
+                    Text(Scope.byMonth.rawValue).tag(Scope.byMonth)
+                    Text(Scope.all.rawValue).tag(Scope.all)
                 }
-                // ② 口座の初期値（カードに紐づく支払い口座があれば優先）
-                if let cid = selectedCardID, let payID = store.cardPaymentAccount[cid],
-                   let acc = store.accounts.first(where: { $0.id == payID }) {
-                    settleAccount = acc
-                } else {
-                    settleAccount = store.accounts.first
+                .pickerStyle(.segmented)
+                .frame(width: 360)
+
+                if scope == .byMonth {
+                    monthSelector
+                        .transition(.opacity)
+                        .layoutPriority(2) // 年が欠けないよう優先度を上げる
                 }
-                // Picker用の選択IDも同期
-                settleAccountID = settleAccount?.id ?? store.accounts.first?.id
-                // ③ 決済日の初期値（表示中スコープの月末）
-                let (y, m) = currentYearMonth()
-                var cal = Calendar(identifier: .gregorian)
-                cal.timeZone = .current
-                if let start = cal.date(from: DateComponents(year: y, month: m, day: 1)),
-                   let next  = cal.date(byAdding: .month, value: 1, to: start),
-                   let eom   = cal.date(byAdding: .day, value: -1, to: next) {
-                    settleDate = eom
-                } else {
-                    settleDate = Date()
-                }
-                showSettlementSheet = true
-            } label: {
-                Label("支払い登録…", systemImage: "creditcard.and.123")
             }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-            .help("利用合計を決済口座へ反映")
-            
-            Spacer()
-            
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            // 右：アクションボタン群
+
             Button {
                 showManager = true
             } label: {
@@ -258,7 +248,7 @@ struct CreditCardUsageView: View {
     
     @ViewBuilder
     private var monthSelector: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 8) {
             Button { selectedYear -= 1 } label: { Image(systemName: "chevron.left") }
                 .buttonStyle(.borderless)
             Text(String(selectedYear))
@@ -266,15 +256,15 @@ struct CreditCardUsageView: View {
                 .monospacedDigit()
             Button { selectedYear += 1 } label: { Image(systemName: "chevron.right") }
                 .buttonStyle(.borderless)
-            Spacer().frame(width: 50)
+            Spacer(minLength: 4)
             Picker("", selection: $selectedMonth) {
                 ForEach(1...12, id: \.self) { m in
                     Text("\(m)").tag(m)
                 }
             }
             .pickerStyle(.segmented)
-            .padding(.leading, 8)
-            .frame(width: 260)
+            .padding(.leading, 1)
+            .frame(minWidth: 360, maxWidth: 560)
         }
     }
     
@@ -307,6 +297,37 @@ struct CreditCardUsageView: View {
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
+            Divider().frame(height: 16)
+            Button {
+                // 一括決済（現在の絞り込み結果の合計をまとめて登録）
+                let amt = max(0, totalAmount)
+                if let s = Fmt.decimal.string(from: NSNumber(value: amt)) {
+                    settleAmountText = s
+                } else {
+                    settleAmountText = String(Int(amt))
+                }
+                // 既定口座: カードの既定 → 先頭
+                settleAccountID = store.defaultSettlementAccountID(for: selectedCardID)
+                    ?? store.accounts.first?.id
+                // 決済日: 表示中スコープの月末（失敗時は今日）
+                let (y, m) = currentYearMonth()
+                var cal = Calendar(identifier: .gregorian)
+                cal.timeZone = .current
+                if let start = cal.date(from: DateComponents(year: y, month: m, day: 1)),
+                   let next  = cal.date(byAdding: .month, value: 1, to: start),
+                   let eom   = cal.date(byAdding: .day, value: -1, to: next) {
+                    settleDate = eom
+                } else {
+                    settleDate = Date()
+                }
+                showSettlementSheet = true
+            } label: {
+                Label("まとめて決済…", systemImage: "checklist")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .help("表示中の利用合計でカード支払いを登録")
+            .disabled(store.accounts.isEmpty || filtered.isEmpty)
         }
         .font(.callout)
         .foregroundStyle(.secondary)
@@ -391,7 +412,7 @@ struct CreditCardUsageView: View {
     }
     
     private var canCommit: Bool {
-        parsedSettleAmount > 0 && settleAccount != nil
+        parsedSettleAmount > 0 && store.account(id: settleAccountID) != nil
     }
 
     private var parsedSettleAmount: Double {
@@ -416,7 +437,7 @@ struct CreditCardUsageView: View {
     }
 
     private func commitSettlement() {
-        guard canCommit, let acc = settleAccount else { return }
+        guard canCommit, let acc = store.account(id: settleAccountID) else { return }
         let amount = parsedSettleAmount
         // ヘッダーが「すべて」でも、一覧が単一カードならそのカードを自動選択
         let effectiveCardID: UUID? = {
@@ -429,9 +450,9 @@ struct CreditCardUsageView: View {
         let tx = Transaction(
             id: UUID(),
             date: settleDate,
-            amount: amount,                // ※ 符号運用は既存ルールに合わせる（必要なら -abs(amount) に変更）
+            amount: amount,
             memo: memo,
-            kind: .cardPayment,            // 種類はカード決済
+            kind: .cardPayment,
             category: nil,
             card: cardRef,
             person: nil,
@@ -440,7 +461,9 @@ struct CreditCardUsageView: View {
             toAccount: nil,
             pairID: nil
         )
-        store.transactions.append(tx)
+        store.upsertTransaction(tx)
+        // 今回選んだ口座を、このカードの既定として覚える
+        store.setDefaultSettlementAccountID(settleAccountID, for: effectiveCardID)
         store.save()
         showSettlementSheet = false
     }

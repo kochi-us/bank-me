@@ -21,7 +21,7 @@ struct AccountDetailView: View {
         case today = "今日"
         case thisMonth = "今月"
         case byMonth = "月指定"
-        case all = "すべて"
+        case all = "all"
         var id: String { rawValue }
     }
     @State private var uiScope: UIScope = .thisMonth
@@ -185,7 +185,7 @@ struct AccountDetailView: View {
             .padding(.bottom, 20)
             // ——— 期間セレクタ（total の下に配置）———
             HStack(spacing: 12) {
-                Picker("期間", selection: $uiScope) {
+                Picker("", selection: $uiScope) {
                     Text(UIScope.today.rawValue).tag(UIScope.today)
                     Text(UIScope.thisMonth.rawValue).tag(UIScope.thisMonth)
                     Text(UIScope.byMonth.rawValue).tag(UIScope.byMonth)
