@@ -18,6 +18,8 @@ final class AppStore: ObservableObject {
     @Published var categories: [Category] = []
     @Published var accounts: [Account] = []
     @Published var creditCards: [Category] = []
+    /// key: カードID, value: 支払い口座ID
+    @Published var cardPaymentAccount: [UUID: UUID] = [:]
     @Published var transactions: [Transaction] = []
     @Published var personName: String = "kochi"
     @Published var appTitle: String = "Bank Management"
@@ -79,6 +81,7 @@ final class AppStore: ObservableObject {
         var categories: [CategoryState]
         var accounts: [AccountState]
         var creditCards: [CategoryState]
+        var cardPaymentAccount: [UUID: UUID]? // v1 では未導入のため Optional で後方互換
         var transactions: [TransactionState]
         var personName: String
         var appTitle: String
@@ -122,6 +125,7 @@ final class AppStore: ObservableObject {
             categories: catStates,
             accounts: accStates,
             creditCards: cardStates,
+            cardPaymentAccount: self.cardPaymentAccount,
             transactions: txStates,
             personName: personName,
             appTitle: appTitle,
@@ -191,6 +195,7 @@ final class AppStore: ObservableObject {
             self.categories = cats
             self.accounts = accs
             self.creditCards = cards
+            self.cardPaymentAccount = s.cardPaymentAccount ?? [:]
             self.transactions = txs
             self.personName = s.personName
             self.appTitle = s.appTitle
@@ -373,6 +378,7 @@ extension AppStore {
                     Account(id: $0.id, name: $0.name, number: $0.number, branchName: $0.branchName, branchCode: $0.branchCode)
                 }
                 self.creditCards = state.creditCards.map { Category(id: $0.id, name: $0.name) }
+                self.cardPaymentAccount = state.cardPaymentAccount ?? [:]
                 self.transactions = state.transactions.map { t in
                     Transaction(
                         id: t.id,
