@@ -5,22 +5,6 @@
 //  Created by KOCHI on 2025/10/13.
 //
 
-//
-//  CategoryManagerView.swift
-//  bank-management
-//
-//  Created by KOCHI on 2025/10/13.
-//
-
-import Foundation
-
-//
-//  CategoryManagerView.swift
-//  bank-management
-//
-//  Created by KOCHI on 2025/10/13.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -39,6 +23,7 @@ struct CategoryManagerView: View {
                     .onSubmit { add() }
                     .submitLabel(.done)
                     .frame(minWidth: 220)
+                    .accentColor(.red)
                 Button("追加") { add() }
                     .keyboardShortcut(.return)
                     .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -80,6 +65,7 @@ struct CategoryManagerView: View {
                     Text("カテゴリを編集").font(.headline)
                     TextField("カテゴリ名", text: $editName)
                         .textFieldStyle(.roundedBorder)
+                        .accentColor(.red)
                         .onSubmit {
                             saveEditedCategory(cat)
                         }

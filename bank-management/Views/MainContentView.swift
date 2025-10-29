@@ -60,6 +60,7 @@ struct MainContentView: View {
                     .multilineTextAlignment(.center)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 320)
+                    .accentColor(.red)
             }
 #if os(macOS)
             // 💾 バックアップ（アプリデータをフォルダにコピー）

@@ -20,6 +20,7 @@ struct CreditCardManagerView: View {
                     .onSubmit { add() }
                     .submitLabel(.done)
                     .frame(minWidth: 260)
+                    .accentColor(.red)
                 Button("追加") { add() }
                     .keyboardShortcut(.return)
                     .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)

@@ -145,13 +145,22 @@ struct TransactionFormView: View {
                     HStack {
                         Text("金額")
 #if os(macOS)
-                        NoScrollNumberField(text: $amountText, placeholder: "0")
-                            .frame(maxWidth: 180)
+                        MacCaretTextField(text: $amountText, placeholder: "0", caretColor: .systemRed)
+                            .textFieldStyle(.plain)
                             .focused($amountFocused)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(amountFocused ? Color.accentColor : Color.clear, lineWidth: 2)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 10)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.trailing)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color(nsColor: .textBackgroundColor))
                             )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(amountFocused ? Color.red : Color.secondary.opacity(0.3), lineWidth: 2)
+                            )
+                            .accentColor(.red)
                             .onChange(of: amountText) { oldValue, newValue in
                                 let norm = normalizedAmountText(newValue)
                                 if norm != newValue { amountText = norm }
@@ -173,6 +182,7 @@ struct TransactionFormView: View {
                             .textFieldStyle(.roundedBorder)
                             .frame(maxWidth: 180)
                             .focused($amountFocused)
+                            .accentColor(.red)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
                                     .stroke(amountFocused ? Color.accentColor : Color.clear, lineWidth: 2)
@@ -196,17 +206,26 @@ struct TransactionFormView: View {
 #if os(iOS)
                             .keyboardType(.numberPad)
 #endif
-#endif
+                    #endif
                     }
                     
-                    TextField("メモ", text: $memo)
-                        .textFieldStyle(.roundedBorder)
-                        .submitLabel(.done)
-                        .focused($memoFocused)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(memoFocused ? Color.accentColor : Color.clear, lineWidth: 2)
-                        )
+                    LabeledContent("メモ") {
+                        TextField("", text: $memo)
+                            .textFieldStyle(.plain)
+                            .submitLabel(.done)
+                            .focused($memoFocused)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color(nsColor: .textBackgroundColor))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(memoFocused ? Color.red : Color.secondary.opacity(0.3), lineWidth: 2)
+                            )
+                            .accentColor(.red)
+                    }
                 }
                 
                 if kind == .expense || kind == .income || kind == .carryOver || kind == .balance || kind == .cardPayment {
@@ -484,9 +503,9 @@ final class NoScrollTextField: NSTextField {
         let became = super.becomeFirstResponder()
         if let editor = self.currentEditor() as? NSTextView {
             if #available(macOS 10.14, *) {
-                editor.insertionPointColor = NSColor.controlAccentColor
+                editor.insertionPointColor = NSColor.red
             } else {
-                editor.insertionPointColor = NSColor.systemBlue
+                editor.insertionPointColor = NSColor.red
             }
         }
         return became
@@ -501,10 +520,7 @@ final class NoScrollTextField: NSTextField {
             if editor.selectedRange.length == 0 && editor.selectedRange.location == NSNotFound {
                 editor.selectedRange = NSRange(location: len, length: 0)
             }
-            editor.insertionPointColor = {
-                if #available(macOS 10.14, *) { return NSColor.controlAccentColor }
-                else { return NSColor.systemBlue }
-            }()
+            editor.insertionPointColor = NSColor.red
         }
     }
 }

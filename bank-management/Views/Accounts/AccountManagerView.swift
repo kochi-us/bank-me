@@ -22,10 +22,10 @@ struct AccountManagerView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-                TextField("新しい口座名", text: $newName).textFieldStyle(.roundedBorder).frame(minWidth: 160).onSubmit { add() }
-                TextField("口座番号（任意）", text: $newNumber).textFieldStyle(.roundedBorder).frame(minWidth: 120).onSubmit { add() }
-                TextField("支店名（任意）", text: $newBranchName).textFieldStyle(.roundedBorder).frame(minWidth: 140).onSubmit { add() }
-                TextField("店番（任意/3桁）", text: $newBranchCode).textFieldStyle(.roundedBorder).frame(minWidth: 120).onSubmit { add() }
+                TextField("新しい口座名", text: $newName).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 160).onSubmit { add() }
+                TextField("口座番号（任意）", text: $newNumber).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 120).onSubmit { add() }
+                TextField("支店名（任意）", text: $newBranchName).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 140).onSubmit { add() }
+                TextField("店番（任意/3桁）", text: $newBranchCode).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 120).onSubmit { add() }
                 Button("追加") { add() }
                     .keyboardShortcut(.return)
                     .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty || store.accounts.count >= 4)
@@ -79,12 +79,16 @@ struct AccountManagerView: View {
                 Text("口座を編集").font(.headline)
                 TextField("口座名", text: $editName)
                     .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
                 TextField("口座番号（任意）", text: $editNumber)
                     .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
                 TextField("支店名（任意）", text: $editBranchName)
                     .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
                 TextField("店番（任意/3桁）", text: $editBranchCode)
                     .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
                 
                 HStack {
                     Spacer()
