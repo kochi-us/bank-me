@@ -29,7 +29,7 @@ struct SidebarView: View {
             }
             
             // 口座
-            Section("Bank account") {
+            Section("bank account") {
                 ForEach(store.accounts) { acc in
                     Label(acc.name, systemImage: "building.columns")
                         .tag(SidebarItem.account(acc))   // NavigationLinkではなく tag で選択反映
@@ -37,7 +37,7 @@ struct SidebarView: View {
             }
             
             // 管理
-            Section("Where to manage") {
+            Section("to manage") {
                 Label("bank account", systemImage: "banknote")
                     .tag(SidebarItem.accounts)
                 Label("credit card", systemImage: "creditcard")
@@ -47,13 +47,13 @@ struct SidebarView: View {
             }
             
             // クイック
-            Section("Today or All Time") {
+            Section("today or all time") {
                 Label("all", systemImage: "tray.full")
                     .tag(SidebarItem.all)
             }
             
             // 年月
-            Section("年月") {
+            Section("year and month") {
                 yearStepper
                 monthGrid
             }

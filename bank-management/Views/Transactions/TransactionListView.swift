@@ -23,9 +23,9 @@ struct TransactionListView: View {
     
     // 右ペイン用：期間セレクタ（今日 / 今月 / 月指定 / すべて）
     private enum UIScope: String, CaseIterable, Identifiable {
-        case today = "今日"
-        case thisMonth = "今月"
-        case byMonth = "月指定"
+        case today = "to day"
+        case thisMonth = "this month"
+        case byMonth = "by month"
         case all = "all"
         var id: String { rawValue }
     }

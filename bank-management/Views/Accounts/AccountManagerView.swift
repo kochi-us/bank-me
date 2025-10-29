@@ -113,18 +113,6 @@ struct AccountManagerView: View {
             .padding(.top, 16)
             .frame(minWidth: 360)
         }
-        .toolbar {
-#if os(macOS)
-            ToolbarItem(placement: .automatic) {
-                Button {
-                    store.revealStateFile()
-                } label: {
-                    Label("保存ファイルを表示", systemImage: "folder")
-                }
-                .help("保存先の state.json を Finder で開く")
-            }
-#endif
-        }
         .navigationTitle("口座管理")
     }
     

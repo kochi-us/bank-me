@@ -33,9 +33,9 @@ struct CreditCardUsageView: View {
     @State private var settleDate: Date = Date()
     
     enum Scope: String, CaseIterable, Identifiable {
-        case today = "今日"
-        case thisMonth = "今月"
-        case byMonth = "月指定"
+        case today = "to day"
+        case thisMonth = "this month"
+        case byMonth = "by month"
         case all = "all"
         var id: String { rawValue }
     }

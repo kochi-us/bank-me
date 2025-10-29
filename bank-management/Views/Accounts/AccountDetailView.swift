@@ -18,9 +18,9 @@ struct AccountDetailView: View {
     
     // 期間セレクタ用の状態
     private enum UIScope: String, CaseIterable, Identifiable {
-        case today = "今日"
-        case thisMonth = "今月"
-        case byMonth = "月指定"
+        case today = "to day"
+        case thisMonth = "this month"
+        case byMonth = "by month"
         case all = "all"
         var id: String { rawValue }
     }

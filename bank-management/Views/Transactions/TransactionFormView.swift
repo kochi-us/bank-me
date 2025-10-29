@@ -20,6 +20,7 @@ struct TransactionFormView: View {
     @State private var date: Date = Date()
     @State private var amountText: String = ""
     @FocusState private var amountFocused: Bool
+    @FocusState private var memoFocused: Bool
     
     // 半角化 + 記号整理
     private func halfwidthAndClean(_ s: String) -> String {
@@ -143,10 +144,14 @@ struct TransactionFormView: View {
                     
                     HStack {
                         Text("金額")
-                        TextField("0", text: $amountText)
-                            .textFieldStyle(.roundedBorder)
+#if os(macOS)
+                        NoScrollNumberField(text: $amountText, placeholder: "0")
                             .frame(maxWidth: 180)
                             .focused($amountFocused)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(amountFocused ? Color.accentColor : Color.clear, lineWidth: 2)
+                            )
                             .onChange(of: amountText) { oldValue, newValue in
                                 let norm = normalizedAmountText(newValue)
                                 if norm != newValue { amountText = norm }
@@ -156,7 +161,32 @@ struct TransactionFormView: View {
                                     amountText = amountFormatter.string(from: NSNumber(value: v)) ?? String(Int(v))
                                 }
                             }
-                            .onChange(of: amountFocused) { _, focused in
+                            .onChange(of: amountFocused) { old, focused in
+                                if !focused {
+                                    if let v = parseAmount(amountText) {
+                                        amountText = amountFormatter.string(from: NSNumber(value: v)) ?? String(Int(v))
+                                    }
+                                }
+                            }
+#else
+                        TextField("0", text: $amountText)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(maxWidth: 180)
+                            .focused($amountFocused)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(amountFocused ? Color.accentColor : Color.clear, lineWidth: 2)
+                            )
+                            .onChange(of: amountText) { oldValue, newValue in
+                                let norm = normalizedAmountText(newValue)
+                                if norm != newValue { amountText = norm }
+                            }
+                            .onSubmit {
+                                if let v = parseAmount(amountText) {
+                                    amountText = amountFormatter.string(from: NSNumber(value: v)) ?? String(Int(v))
+                                }
+                            }
+                            .onChange(of: amountFocused) { old, focused in
                                 if !focused {
                                     if let v = parseAmount(amountText) {
                                         amountText = amountFormatter.string(from: NSNumber(value: v)) ?? String(Int(v))
@@ -166,11 +196,17 @@ struct TransactionFormView: View {
 #if os(iOS)
                             .keyboardType(.numberPad)
 #endif
+#endif
                     }
                     
                     TextField("メモ", text: $memo)
                         .textFieldStyle(.roundedBorder)
                         .submitLabel(.done)
+                        .focused($memoFocused)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(memoFocused ? Color.accentColor : Color.clear, lineWidth: 2)
+                        )
                 }
                 
                 if kind == .expense || kind == .income || kind == .carryOver || kind == .balance || kind == .cardPayment {
@@ -438,3 +474,75 @@ private struct CategorySearchList: View {
         }
     }
 }
+
+#if os(macOS)
+import AppKit
+
+final class NoScrollTextField: NSTextField {
+    override func scrollWheel(with event: NSEvent) { /* ignore to prevent accidental increment */ }
+    override func becomeFirstResponder() -> Bool {
+        let became = super.becomeFirstResponder()
+        if let editor = self.currentEditor() as? NSTextView {
+            if #available(macOS 10.14, *) {
+                editor.insertionPointColor = NSColor.controlAccentColor
+            } else {
+                editor.insertionPointColor = NSColor.systemBlue
+            }
+        }
+        return became
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        super.mouseDown(with: event)
+        window?.makeFirstResponder(self)
+        if let editor = currentEditor() as? NSTextView {
+            // クリック位置にキャレットを表示（通常の動作を尊重しつつ、念のため末尾へ）
+            let len = (stringValue as NSString).length
+            if editor.selectedRange.length == 0 && editor.selectedRange.location == NSNotFound {
+                editor.selectedRange = NSRange(location: len, length: 0)
+            }
+            editor.insertionPointColor = {
+                if #available(macOS 10.14, *) { return NSColor.controlAccentColor }
+                else { return NSColor.systemBlue }
+            }()
+        }
+    }
+}
+
+struct NoScrollNumberField: NSViewRepresentable {
+    @Binding var text: String
+    var placeholder: String
+
+    func makeNSView(context: Context) -> NoScrollTextField {
+        let tf = NoScrollTextField()
+        tf.isBezeled = true
+        tf.bezelStyle = .roundedBezel
+        tf.focusRingType = .default
+        tf.placeholderString = placeholder
+        tf.delegate = context.coordinator
+        tf.isEditable = true
+        tf.isSelectable = true
+        tf.usesSingleLineMode = true
+        tf.lineBreakMode = .byClipping
+        tf.cell?.wraps = false
+        tf.cell?.isScrollable = true
+        return tf
+    }
+
+    func updateNSView(_ nsView: NoScrollTextField, context: Context) {
+        if nsView.stringValue != text { nsView.stringValue = text }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, NSTextFieldDelegate {
+        private let parent: NoScrollNumberField
+        init(_ parent: NoScrollNumberField) { self.parent = parent }
+        func controlTextDidChange(_ obj: Notification) {
+            guard let tf = obj.object as? NSTextField else { return }
+            // mirror changes to binding; filtering remains handled by existing onChange in SwiftUI
+            if parent.text != tf.stringValue { parent.text = tf.stringValue }
+        }
+    }
+}
+#endif
