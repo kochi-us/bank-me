@@ -22,19 +22,46 @@ struct AccountManagerView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-                TextField("新しい口座名", text: $newName).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 160).onSubmit { add() }
-                TextField("口座番号（任意）", text: $newNumber).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 120).onSubmit { add() }
-                TextField("支店名（任意）", text: $newBranchName).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 140).onSubmit { add() }
-                TextField("店番（任意/3桁）", text: $newBranchCode).textFieldStyle(.roundedBorder).accentColor(.red).frame(minWidth: 120).onSubmit { add() }
+                TextField("新しい口座名", text: $newName)
+                    .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
+                    .frame(minWidth: 160)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.red, lineWidth: 2)
+                    )
+                    .onSubmit { add() }
+                TextField("口座番号（任意）", text: $newNumber)
+                    .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
+                    .frame(minWidth: 120)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.red, lineWidth: 2)
+                    )
+                    .onSubmit { add() }
+                TextField("支店名（任意）", text: $newBranchName)
+                    .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
+                    .frame(minWidth: 140)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.red, lineWidth: 2)
+                    )
+                    .onSubmit { add() }
+                TextField("店番（任意/3桁）", text: $newBranchCode)
+                    .textFieldStyle(.roundedBorder)
+                    .accentColor(.red)
+                    .frame(minWidth: 120)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.red, lineWidth: 2)
+                    )
+                    .onSubmit { add() }
                 Button("追加") { add() }
                     .keyboardShortcut(.return)
-                    .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty || store.accounts.count >= 4)
-                    .help(store.accounts.count >= 4 ? "口座は最大4件までです" : "新しい口座を追加")
-                if store.accounts.count >= 4 {
-                    Text("")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                    .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty || store.accounts.count >= 10)
+                    .help(store.accounts.count >= 10 ? "口座は最大10件までです" : "新しい口座を追加")
             }
             List {
                 ForEach(store.accounts, id: \.id) { a in
@@ -122,7 +149,7 @@ struct AccountManagerView: View {
     
     private func add() {
         let name = newName.trimmingCharacters(in: .whitespaces)
-        guard store.accounts.count < 4 else { return }
+        guard store.accounts.count < 10 else { return }
         guard name.isEmpty == false else { return }
         store.accounts.append(Account(
             name: name,

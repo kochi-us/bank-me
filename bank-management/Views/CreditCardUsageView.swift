@@ -140,6 +140,10 @@ struct CreditCardUsageView: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 160)
                         .accentColor(.red)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.red, lineWidth: 2)
+                        )
                         .onSubmit { commitSettlement() }
                 }
                 Picker("決済口座", selection: $settleAccountID) {

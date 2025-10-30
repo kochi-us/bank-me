@@ -61,6 +61,10 @@ struct MainContentView: View {
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 320)
                     .accentColor(.red)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.red, lineWidth: 2)
+                    )
             }
 #if os(macOS)
             // 💾 バックアップ（アプリデータをフォルダにコピー）

@@ -19,8 +19,12 @@ struct CreditCardManagerView: View {
                     .textFieldStyle(.roundedBorder)
                     .onSubmit { add() }
                     .submitLabel(.done)
-                    .frame(minWidth: 260)
+                    .frame(minWidth: 220)
                     .accentColor(.red)
+                    .overlay(
+                           RoundedRectangle(cornerRadius: 8)
+                               .stroke(Color.red, lineWidth: 2)
+                       )
                 Button("追加") { add() }
                     .keyboardShortcut(.return)
                     .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
