@@ -132,44 +132,15 @@ struct CreditCardUsageView: View {
             .frame(minWidth: 520, minHeight: 420)
         }
         .sheet(isPresented: $showSettlementSheet) {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("カード支払いを登録").font(.headline)
-                HStack {
-                    Text("合計")
-                    TextField("0", text: $settleAmountText)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 160)
-                        .accentColor(.red)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.red, lineWidth: 2)
-                        )
-                        .onSubmit { commitSettlement() }
-                }
-                Picker("決済口座", selection: $settleAccountID) {
-                    Text("— 口座を選択 —").tag(UUID?.none)
-                    ForEach(store.accounts, id: \.id) { a in
-                        Text(a.name).tag(Optional(a.id))
-                    }
-                }
-                .pickerStyle(.menu)
-                .frame(maxWidth: 300)
-                .disabled(store.accounts.isEmpty)
-                DatePicker("決済日", selection: $settleDate, displayedComponents: .date)
-                    .datePickerStyle(.field)
-                    .onSubmit { commitSettlement() }
-                HStack {
-                    Spacer()
-                    Button("キャンセル") { showSettlementSheet = false }
-                    Button("反映") { commitSettlement() }
-                        .keyboardShortcut(.return)
-                        .buttonStyle(.borderedProminent)
-                        .disabled(!canCommit)
-                }
-                .padding(.top, 6)
-            }
-            .padding(16)
-            .frame(minWidth: 420)
+            CardSettlementSheet(
+                accounts: store.accounts,
+                amountText: $settleAmountText,
+                accountID: $settleAccountID,
+                date: $settleDate,
+                canCommit: canCommit,
+                onCommit: { commitSettlement() },
+                onCancel: { showSettlementSheet = false }
+            )
             .onAppear {
                 // 既定口座（カードに結び付いているもの）が有効ならそれ、なければ先頭口座
                 if let preset = store.defaultSettlementAccountID(for: selectedCardID),

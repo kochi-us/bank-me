@@ -3,7 +3,7 @@
 //  bank-management
 //
 //  Created by KOCHI on 2025/10/13.
-//
+//  資金移動のモーダルシート
 
 import SwiftUI
 import Combine
@@ -107,7 +107,7 @@ struct TransactionFormView: View {
             Form {
                 // 編集前プレビュー
                 if let e = editing {
-                    Section(header: Text("編集前の内容")) {
+                    Section(header: Text("編集前のプレビュー")) {
                         HStack { Text("日付"); Spacer(); Text(e.date, style: .date) }
                         HStack { Text("種類"); Spacer(); Text(e.kind.rawValue) }
                         HStack {
@@ -133,6 +133,7 @@ struct TransactionFormView: View {
                         if let p = e.person { HStack { Text("人"); Spacer(); Text(p.name) } }
                     }
                 }
+                
                 Section(header: Text("Record and save")) {
                     DatePicker("日付", selection: $date, displayedComponents: .date)
                     

@@ -335,65 +335,7 @@ struct TransactionListView: View {
             print("🔍 searchText:", oldValue, "→", newValue)
 #endif
         }
-        .sheet(item: $editing) { original in
-            TransactionFormView(editing: original) { result in
-                if result.kind == .transfer, let pid = result.pairID {
-                    // 振替は編集時に旧ペアを丸ごと削除してから、出金/入金の2件を再生成する
-                    store.transactions.removeAll { $0.pairID == pid }
-                    
-                    guard let from = result.fromAccount, let to = result.toAccount else {
-                        store.save(); return
-                    }
-                    let newPID = result.pairID ?? UUID()
-                    var baseMemo = result.memo.trimmingCharacters(in: .whitespacesAndNewlines)
-                    // 既存の固定語・ラベルを除去（半角/全角両対応）
-                    let toStrip = ["(入金)", "(出金)", "（入金）", "（出金）", "資金移動"]
-                    for token in toStrip {
-                        baseMemo = baseMemo.replacingOccurrences(of: token, with: "")
-                    }
-                    let cleanMemo = baseMemo.trimmingCharacters(in: .whitespaces)
-                    
-                    let tOut = Transaction(
-                        id: UUID(),
-                        date: result.date,
-                        amount: result.amount,
-                        memo: cleanMemo,
-                        kind: .transfer,
-                        category: nil,
-                        card: nil,
-                        person: nil,
-                        account: nil,
-                        fromAccount: from,
-                        toAccount: to,
-                        pairID: newPID
-                    )
-                    let tIn = Transaction(
-                        id: UUID(),
-                        date: result.date,
-                        amount: result.amount,
-                        memo: cleanMemo,
-                        kind: .transfer,
-                        category: nil,
-                        card: nil,
-                        person: nil,
-                        account: nil,
-                        fromAccount: from,
-                        toAccount: to,
-                        pairID: newPID
-                    )
-                    store.transactions.insert(contentsOf: [tOut, tIn], at: 0)
-                } else {
-                    // 通常取引は単純 upsert
-                    if let idx = store.transactions.firstIndex(where: { $0.id == result.id }) {
-                        store.transactions[idx] = result
-                    } else {
-                        store.transactions.insert(result, at: 0)
-                    }
-                }
-                store.save()
-            }
-            .frame(minWidth: 520, minHeight: 420)
-        }
+        .transactionEditSheet(editing: $editing, store: store)
         .onDeleteCommand { deleteSelected() }
         .onAppear {
             // 初期表示時、Sidebar の指定を UI に反映
